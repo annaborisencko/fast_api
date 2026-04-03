@@ -90,18 +90,16 @@ async def search_adv(
 @app.patch('/api/v1/advertisement/{adv_id}', response_model=UpdateAdvResponse)
 async def update_adv(adv_id: int, adv_data: UpdateAdvRequest, session: SessionDependency):
     adv_dict = adv_data.model_dump(exclude_unset=True)
-    if adv_dict.get("done"):
-        adv_dict["end_time"] = datetime.datetime.now()
-    toto_orm_obj = await crud.get_item_by_id(session, models.Adv, adv_id)
+    adv_orm_obj = await crud.get_item_by_id(session, models.Adv, adv_id)
 
     for field, value in adv_dict.items():
-        setattr(toto_orm_obj, field, value)
-    await crud.add_item(session, toto_orm_obj)
+        setattr(adv_orm_obj, field, value)
+    await session.commit()
     return SUCCESS_RESPONSE
 
 
 @app.delete('/api/v1/advertisement/{adv_id}', response_model=DeleteAdvResponse)
 async def delete_adv(adv_id: int, session: SessionDependency):
-    adv_orm_obj = await crud.get_item_by_id(session, models.adv, adv_id)
+    adv_orm_obj = await crud.get_item_by_id(session, models.Adv, adv_id)
     await crud.delete_item(session, adv_orm_obj)
     return SUCCESS_RESPONSE

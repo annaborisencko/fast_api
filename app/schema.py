@@ -40,12 +40,6 @@ class UpdateAdvResponse(SuccessResponse):
 
 
 class GetAdvResponse(BaseModel):
-    # id: int | None = None   
-    # title: str | None = None
-    # description: str | None = None
-    # price: float | None = None
-    # user_id: int | None = None
-    # created_at: datetime.datetime | None = None
     id: int  
     title: str
     description: str

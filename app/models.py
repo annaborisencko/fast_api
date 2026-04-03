@@ -1,7 +1,7 @@
 import datetime
 
 import config
-from sqlalchemy import Boolean, DateTime, Integer, String, func, Text, Float, ForeignKey
+from sqlalchemy import Boolean, DateTime, Integer, String, func, Text, Float, ForeignKey, UniqueConstraint
 from sqlalchemy.ext.asyncio import (AsyncAttrs, async_sessionmaker,
                                     create_async_engine)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, MappedColumn
@@ -43,6 +43,10 @@ class Adv(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime, server_default=func.now()
+    )
+
+    __table_args__ = (
+        UniqueConstraint('title', 'user_id', name='unique_title_user'),
     )
 
     @property
