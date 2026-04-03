@@ -68,13 +68,13 @@ PROJECT_NAME-app - контейнер с fast_api сервером
 После успешного запуска контейнеров выполните клиентский скрипт:
 
 ```bash
-docker-compose exec app python client.py
+docker-compose exec app python ../client.py
 ```
 
 Или, если используете Python 3:
 
 ```bash
-docker-compose exec app python3 client.py
+docker-compose exec app python3 ../client.py
 ```
 
 Результат выполнения отобразится в терминале.
