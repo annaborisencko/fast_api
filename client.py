@@ -76,7 +76,12 @@ print(data.status_code)
 print(data.json(), "\n")
 
 print("##### Ищем объявления описанием, содержащим текст 'хороший' #####")
-data = requests.get("http://localhost:80/api/v1/advertisement", params={"description": "хороший"})
+data = requests.get("http://localhost:80/api/v1/advertisement", params={"description": "хороший", "limit": 2, "offset": 1})
+print(data.status_code)
+print(data.json(), "\n")
+
+print("##### Ищем объявления с ценой в интервале от 1300 до 1500 включительно #####")
+data = requests.get("http://localhost:80/api/v1/advertisement", params={"price_min": 1300, "price_max": 1500})
 print(data.status_code)
 print(data.json(), "\n")
 

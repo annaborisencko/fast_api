@@ -62,7 +62,7 @@ class Adv(Base):
 
 
 ORM_OBJ = [User, Adv] 
-ORM_CLS = type[User, Adv]
+ORM_CLS = type[User] | type[Adv]
 
 
 async def init_orm():

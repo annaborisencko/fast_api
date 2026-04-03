@@ -53,9 +53,13 @@ async def search_adv(
     id: int = None,
     title: str = None,
     description: str = None,
-    price: float = None,
+    # price: float = None,
+    price_min: float = None,
+    price_max: float = None,
     user_id: int = None,
-    created_at: datetime.datetime = None
+    created_at: datetime.datetime = None,
+    limit: int = 10,
+    offset: int = 0
     ):
     
     query = select(models.Adv)
@@ -70,8 +74,11 @@ async def search_adv(
     if description is not None:
         conditions.append(models.Adv.description.contains(description))
     
-    if price is not None:
-        conditions.append(models.Adv.price == price)
+    # if price is not None:
+    #     conditions.append(models.Adv.price == price)
+
+    if price_min is not None and price_max is not None:
+        conditions.append(models.Adv.price.between(price_min, price_max))
     
     if user_id is not None:
         conditions.append(models.Adv.user_id == user_id)
@@ -82,7 +89,7 @@ async def search_adv(
     if conditions:
         query = query.where(*conditions)
 
-    query = query.limit(10000)
+    query = query.limit(limit).offset(offset)
     advs = await session.scalars(query)
     return {"results": [adv.dict for adv in advs]}
 
