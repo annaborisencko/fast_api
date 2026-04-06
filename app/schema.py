@@ -1,7 +1,7 @@
 from typing import Literal
 import datetime
 
-from pydantic import BaseModel, field_validator, Field
+from pydantic import BaseModel, Field
 
 
 class IdResponse(BaseModel):

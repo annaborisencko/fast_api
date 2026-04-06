@@ -62,7 +62,10 @@ async def search_adv(
     limit: int = 10,
     offset: int = 0
     ):
-    
+        
+    if price_min is not None and price_max is not None and price_min > price_max:
+        raise HTTPException(400, "price_min must be <= price_max")
+        
     query = select(models.Adv)
     conditions = []
     
@@ -80,7 +83,7 @@ async def search_adv(
     
     if price_max is not None:
         conditions.append(models.Adv.price <= price_max)
-    
+
     if user_id is not None:
         conditions.append(models.Adv.user_id == user_id)
     
