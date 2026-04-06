@@ -1,6 +1,6 @@
 import datetime
 
-import config
+from . import config
 from sqlalchemy import Boolean, DateTime, Integer, String, func, Text, Float, ForeignKey, UniqueConstraint
 from sqlalchemy.ext.asyncio import (AsyncAttrs, async_sessionmaker,
                                     create_async_engine)

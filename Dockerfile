@@ -5,5 +5,5 @@ COPY ./requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
 
 COPY . /app
-WORKDIR /app/app
-ENTRYPOINT ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "80"]
+WORKDIR /app
+ENTRYPOINT ["uvicorn", "app.server:app", "--host", "0.0.0.0", "--port", "80"]

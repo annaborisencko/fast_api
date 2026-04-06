@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
+from fastapi import HTTPException
 
-from schema import (
+from .schema import (
     CreateUserRequest,
     CreateUserResponse,
     CreateAdvRequest,
@@ -12,11 +14,11 @@ from schema import (
     UpdateAdvRequest,
     UpdateAdvResponse
 )
-from lifespan import lifespan
-from dependancy import SessionDependency
-from constants import SUCCESS_RESPONSE
-import models
-import crud
+from .lifespan import lifespan
+from .dependancy import SessionDependency
+from .constants import SUCCESS_RESPONSE
+from . import models
+from . import crud
 
 import datetime
 
@@ -35,10 +37,10 @@ async def create_user(User: CreateUserRequest, session: SessionDependency):
 
 @app.post('/api/v1/advertisement', response_model=CreateAdvResponse)
 async def create_adv(Adv: CreateAdvRequest, session: SessionDependency):
-    Adv_dict = Adv.model_dump(exclude_unset=True)
-    Adv_orm_obj = models.Adv(**Adv_dict)
-    await crud.add_item(session, Adv_orm_obj)
-    return Adv_orm_obj.id_dict
+    adv_dict = Adv.model_dump(exclude_unset=True)
+    adv_orm_obj = models.Adv(**adv_dict)
+    await crud.add_item(session, adv_orm_obj)
+    return adv_orm_obj.id_dict
 
 
 @app.get('/api/v1/advertisement/{adv_id}', response_model=GetAdvResponse)
@@ -53,7 +55,6 @@ async def search_adv(
     id: int = None,
     title: str = None,
     description: str = None,
-    # price: float = None,
     price_min: float = None,
     price_max: float = None,
     user_id: int = None,
@@ -74,11 +75,11 @@ async def search_adv(
     if description is not None:
         conditions.append(models.Adv.description.contains(description))
     
-    # if price is not None:
-    #     conditions.append(models.Adv.price == price)
-
-    if price_min is not None and price_max is not None:
-        conditions.append(models.Adv.price.between(price_min, price_max))
+    if price_min is not None:
+        conditions.append(models.Adv.price >= price_min)
+    
+    if price_max is not None:
+        conditions.append(models.Adv.price <= price_max)
     
     if user_id is not None:
         conditions.append(models.Adv.user_id == user_id)
@@ -101,12 +102,14 @@ async def update_adv(adv_id: int, adv_data: UpdateAdvRequest, session: SessionDe
 
     for field, value in adv_dict.items():
         setattr(adv_orm_obj, field, value)
-    await session.commit()
+    try:
+        await session.commit()
+    except IntegrityError as err:
+        raise HTTPException(409, "Item already exists")
     return SUCCESS_RESPONSE
 
 
-@app.delete('/api/v1/advertisement/{adv_id}', response_model=DeleteAdvResponse)
+@app.delete('/api/v1/advertisement/{adv_id}', status_code=204)
 async def delete_adv(adv_id: int, session: SessionDependency):
     adv_orm_obj = await crud.get_item_by_id(session, models.Adv, adv_id)
     await crud.delete_item(session, adv_orm_obj)
-    return SUCCESS_RESPONSE

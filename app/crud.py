@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from models import ORM_CLS, ORM_OBJ
+from .models import ORM_CLS, ORM_OBJ
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,7 +12,6 @@ async def add_item(session: AsyncSession, item: ORM_OBJ):
 
     except IntegrityError as err:
         raise HTTPException(409, "Item already exists")
-
 
 async def get_item_by_id(
     session: AsyncSession, orm_cls: ORM_CLS, item_id: int

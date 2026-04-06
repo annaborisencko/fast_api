@@ -1,7 +1,7 @@
 from typing import Literal
 import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator, Field
 
 
 class IdResponse(BaseModel):
@@ -21,9 +21,8 @@ class CreateUserResponse(IdResponse):
 class CreateAdvRequest(BaseModel):
     title: str
     description: str
-    price: float
+    price: float = Field(..., gt=0, description="Price must be more than 0")
     user_id: int
-
 
 class CreateAdvResponse(IdResponse):
     pass
@@ -32,7 +31,7 @@ class CreateAdvResponse(IdResponse):
 class UpdateAdvRequest(BaseModel):
     title: str | None = None
     description: str | None = None
-    price: float | None = None
+    price: float | None = Field(None, gt=0, description="Price must be more than 0")
 
 
 class UpdateAdvResponse(SuccessResponse):
